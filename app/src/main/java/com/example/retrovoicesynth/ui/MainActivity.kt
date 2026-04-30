@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import android.widget.Filter
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.retrovoicesynth.R
@@ -77,9 +78,26 @@ class MainActivity : AppCompatActivity() {
     private fun configurePresetMenu() {
         val names = VoicePreset.all.map { it.displayName }
         presetDropdown.setAdapter(
-            ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, names)
+            PresetAdapter(names)
         )
         presetDropdown.setText(VoicePreset.all.first().displayName, false)
+    }
+
+    private inner class PresetAdapter(
+        private val names: List<String>
+    ) : ArrayAdapter<String>(this, R.layout.item_preset_dropdown, names) {
+        private val noFilter = object : Filter() {
+            override fun performFiltering(constraint: CharSequence?): FilterResults {
+                return FilterResults().apply {
+                    values = names
+                    count = names.size
+                }
+            }
+
+            override fun publishResults(constraint: CharSequence?, results: FilterResults?) = Unit
+        }
+
+        override fun getFilter(): Filter = noFilter
     }
 
     private fun configureSliders() {

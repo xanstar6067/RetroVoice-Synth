@@ -13,6 +13,7 @@ class FormantGenerator {
 
     fun generate(
         phoneme: Phoneme,
+        nextPhoneme: Phoneme? = null,
         sampleRate: Int,
         preset: VoicePreset,
         controls: SynthControls
@@ -25,7 +26,7 @@ class FormantGenerator {
         return when (phoneme.kind) {
             PhonemeKind.Vowel -> vowel(phoneme, sampleCount, sampleRate, preset, controls, robotness)
             PhonemeKind.Fricative -> fricative(phoneme, sampleCount, preset, robotness)
-            PhonemeKind.Stop -> stop(phoneme, sampleCount, sampleRate, preset, controls, robotness)
+            PhonemeKind.Stop -> stop(phoneme, nextPhoneme, sampleCount, sampleRate, preset, controls, robotness)
             PhonemeKind.Nasal -> nasal(phoneme, sampleCount, sampleRate, preset, controls, robotness)
             PhonemeKind.Liquid -> liquid(phoneme, sampleCount, sampleRate, preset, controls, robotness)
             PhonemeKind.Pause -> ShortArray(sampleCount)
@@ -88,6 +89,7 @@ class FormantGenerator {
 
     private fun stop(
         phoneme: Phoneme,
+        nextPhoneme: Phoneme?,
         sampleCount: Int,
         sampleRate: Int,
         preset: VoicePreset,
@@ -99,6 +101,13 @@ class FormantGenerator {
         val clickSamples = min(sampleCount, sampleRate / 90)
         val voiced = phoneme.symbol in voicedStops
         val tailSamples = if (voiced) min(sampleCount, sampleRate / 28) else clickSamples
+        val transition = nextPhoneme?.formants
+        val transitionStart = tailSamples
+        val transitionSamples = if (transition != null) {
+            min(sampleCount - transitionStart, sampleRate / if (voiced) 45 else 58)
+        } else {
+            0
+        }
 
         for (index in 0 until clickSamples) {
             val progress = index.toFloat() / clickSamples
@@ -117,6 +126,28 @@ class FormantGenerator {
                 val buzz = sin(2.0 * PI * buzzPitch * time).toFloat() * 0.34f
                 val edge = centeredNoise() * 0.08f
                 val sample = (buzz + edge) * decay * phoneme.intensity
+                output[index] = toPcm(applyRetro(sample, preset.bitDepth, robotness))
+            }
+        }
+        if (transition != null && transitionSamples > 0) {
+            val start = stopReleaseStart(phoneme.symbol)
+            val buzzPitch = preset.basePitchHz * preset.pitchMultiplier * controls.pitch
+            for (index in transitionStart until transitionStart + transitionSamples) {
+                val progress = (index - transitionStart).toFloat() / max(1, transitionSamples - 1)
+                val time = index.toDouble() / sampleRate
+                val envelope = (1f - progress) * if (voiced) 0.34f else 0.22f
+                val buzz = if (((time * buzzPitch) % 1.0) < 0.5) 1f else -1f
+                val noise = centeredNoise() * if (voiced) 0.055f else 0.11f
+
+                val f1 = lerp(start.f1, transition.f1, progress) * preset.formantShift
+                val f2 = lerp(start.f2, transition.f2, progress) * preset.formantShift
+                val f3 = lerp(start.f3, transition.f3, progress) * preset.formantShift
+                val formantTrace = (
+                    sin(2.0 * PI * f1 * time).toFloat() * 0.34f +
+                        sin(2.0 * PI * f2 * time).toFloat() * 0.22f +
+                        sin(2.0 * PI * f3 * time).toFloat() * 0.1f
+                    )
+                val sample = (buzz.toFloat() * formantTrace + noise) * envelope * phoneme.intensity
                 output[index] = toPcm(applyRetro(sample, preset.bitDepth, robotness))
             }
         }
@@ -234,6 +265,20 @@ class FormantGenerator {
     }
 
     private fun centeredNoise(): Float = random.nextFloat() * 2f - 1f
+
+    private fun lerp(start: Float, end: Float, progress: Float): Float {
+        return start + (end - start) * progress.coerceIn(0f, 1f)
+    }
+
+    private fun stopReleaseStart(symbol: String): VowelFormants {
+        return when (symbol) {
+            "b", "p" -> VowelFormants(250f, 650f, 1800f)
+            "d", "t", "ch", "c" -> VowelFormants(420f, 1800f, 2600f)
+            "g", "k", "q" -> VowelFormants(300f, 1350f, 2200f)
+            "x" -> VowelFormants(320f, 1500f, 2450f)
+            else -> VowelFormants(360f, 1500f, 2400f)
+        }
+    }
 
     private companion object {
         val voicedStops = setOf("b", "d", "g")

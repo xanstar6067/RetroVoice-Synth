@@ -16,8 +16,9 @@ class RetroVoiceSynth(
         val phonemes = mapper.map(normalized)
         val buffer = PcmBuffer(initialCapacity = preset.sampleRate * 2)
 
-        phonemes.forEach { phoneme ->
-            buffer.appendAll(generator.generate(phoneme, preset.sampleRate, preset, controls))
+        phonemes.forEachIndexed { index, phoneme ->
+            val nextPhoneme = phonemes.getOrNull(index + 1)
+            buffer.appendAll(generator.generate(phoneme, nextPhoneme, preset.sampleRate, preset, controls))
             if (phoneme.kind != PhonemeKind.Pause) {
                 val silenceSeconds = when (phoneme.kind) {
                     PhonemeKind.Stop, PhonemeKind.Fricative -> 0.008f

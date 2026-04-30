@@ -14,6 +14,13 @@ class RetroVoiceSynthTest {
     }
 
     @Test
+    fun preprocessorTransliteratesSimpleCyrillicInput() {
+        val normalized = TextPreprocessor().normalize("Би, бум!")
+
+        assertEquals("bi bum", normalized)
+    }
+
+    @Test
     fun mapperAddsSimpleVowelsConsonantsAndWordPauses() {
         val phonemes = PhonemeMapper().map("main computer")
 
@@ -33,6 +40,16 @@ class RetroVoiceSynthTest {
         assertTrue(d.intensity > 1f)
         assertTrue(l.durationMs > 96)
         assertTrue(l.intensity > 0.9f)
+    }
+
+    @Test
+    fun mapperKeepsBiAsVoicedStopIntoFrontVowel() {
+        val phonemes = PhonemeMapper().map(TextPreprocessor().normalize("би"))
+
+        assertEquals("b", phonemes[0].symbol)
+        assertEquals(PhonemeKind.Stop, phonemes[0].kind)
+        assertEquals("i", phonemes[1].symbol)
+        assertEquals(PhonemeKind.Vowel, phonemes[1].kind)
     }
 
     @Test

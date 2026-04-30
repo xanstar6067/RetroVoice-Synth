@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/vox_root_background"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingBottom="18dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="monospace"
+                android:letterSpacing="0.08"
+                android:text="VOX-80"
+                android:textColor="@color/vox_text"
+                android:textSize="34sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/statusText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/vox_badge_background"
+                android:fontFamily="monospace"
+                android:text="READY"
+                android:textColor="@color/vox_green"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/vox_panel_background"
+            android:orientation="vertical">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Input text"
+                app:boxStrokeColor="@color/vox_green"
+                app:hintTextColor="@color/vox_green">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/inputText"
+                    android:layout_width="match_parent"
+                    android:layout_height="130dp"
+                    android:fontFamily="monospace"
+                    android:gravity="top|start"
+                    android:inputType="textMultiLine|textCapSentences"
+                    android:maxLines="6"
+                    android:minLines="4"
+                    android:text="@string/default_phrase"
+                    android:textColor="@color/vox_text"
+                    android:textColorHint="@color/vox_muted"
+                    android:textSize="17sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="14dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/speakButton"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:text="Speak"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    app:backgroundTint="@color/vox_green"
+                    app:cornerRadius="6dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/stopButton"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:text="Stop"
+                    android:textColor="@color/vox_red"
+                    android:textStyle="bold"
+                    app:cornerRadius="6dp"
+                    app:strokeColor="@color/vox_red"
+                    app:strokeWidth="1dp" />
+            </LinearLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:hint="Preset"
+                app:boxStrokeColor="@color/vox_amber"
+                app:hintTextColor="@color/vox_amber">
+
+                <AutoCompleteTextView
+                    android:id="@+id/presetDropdown"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:inputType="none"
+                    android:textColor="@color/vox_text"
+                    android:textSize="16sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="76dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/vox_meter_background"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:paddingHorizontal="14dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="monospace"
+                        android:text="SPEED"
+                        android:textColor="@color/vox_muted"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/speedValue"
+                        android:layout_width="58dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="monospace"
+                        android:gravity="end"
+                        android:textColor="@color/vox_text"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/speedSlider"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:value="1.0"
+                    android:valueFrom="0.55"
+                    android:valueTo="1.8"
+                    app:haloColor="@color/vox_green"
+                    app:thumbColor="@color/vox_green"
+                    app:trackColorActive="@color/vox_green"
+                    app:trackColorInactive="@color/vox_line" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="76dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/vox_meter_background"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:paddingHorizontal="14dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="monospace"
+                        android:text="PITCH"
+                        android:textColor="@color/vox_muted"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/pitchValue"
+                        android:layout_width="58dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="monospace"
+                        android:gravity="end"
+                        android:textColor="@color/vox_text"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/pitchSlider"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:value="1.0"
+                    android:valueFrom="0.65"
+                    android:valueTo="1.55"
+                    app:haloColor="@color/vox_amber"
+                    app:thumbColor="@color/vox_amber"
+                    app:trackColorActive="@color/vox_amber"
+                    app:trackColorInactive="@color/vox_line" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="76dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/vox_meter_background"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:paddingHorizontal="14dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="monospace"
+                        android:text="ROBOTNESS"
+                        android:textColor="@color/vox_muted"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/robotnessValue"
+                        android:layout_width="58dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="monospace"
+                        android:gravity="end"
+                        android:textColor="@color/vox_text"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/robotnessSlider"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:value="0.72"
+                    android:valueFrom="0.0"
+                    android:valueTo="1.0"
+                    app:haloColor="@color/vox_red"
+                    app:thumbColor="@color/vox_red"
+                    app:trackColorActive="@color/vox_red"
+                    app:trackColorInactive="@color/vox_line" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

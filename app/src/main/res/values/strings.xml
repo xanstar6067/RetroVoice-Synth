@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">RetroVoice Synth</string>
+    <string name="app_name">Vox-80</string>
+    <string name="default_phrase">Warning. Main computer online.</string>
 </resources>

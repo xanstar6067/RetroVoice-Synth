@@ -31,13 +31,37 @@
                 android:textSize="34sp"
                 android:textStyle="bold" />
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/themeButton"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="8dp"
+                android:gravity="center"
+                android:insetLeft="0dp"
+                android:insetTop="0dp"
+                android:insetRight="0dp"
+                android:insetBottom="0dp"
+                android:minWidth="40dp"
+                android:minHeight="40dp"
+                android:padding="0dp"
+                android:text=""
+                app:cornerRadius="20dp"
+                app:icon="@drawable/ic_theme_dark"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                app:iconTint="@color/vox_text"
+                app:rippleColor="@color/vox_line"
+                app:strokeColor="@color/vox_line"
+                app:strokeWidth="1dp" />
+
             <TextView
                 android:id="@+id/statusText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/vox_badge_background"
                 android:fontFamily="monospace"
-                android:text="READY"
+                android:text="@string/status_ready"
                 android:textColor="@color/vox_green"
                 android:textSize="12sp"
                 android:textStyle="bold" />
@@ -54,7 +78,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Input text"
+                android:hint="@string/input_text_hint"
                 app:boxStrokeColor="@color/vox_green"
                 app:hintTextColor="@color/vox_green">
 
@@ -85,7 +109,7 @@
                     android:layout_height="match_parent"
                     android:layout_marginEnd="8dp"
                     android:layout_weight="1"
-                    android:text="Speak"
+                    android:text="@string/speak_button"
                     android:textColor="@color/black"
                     android:textStyle="bold"
                     app:backgroundTint="@color/vox_green"
@@ -98,7 +122,7 @@
                     android:layout_height="match_parent"
                     android:layout_marginStart="8dp"
                     android:layout_weight="1"
-                    android:text="Stop"
+                    android:text="@string/stop_button"
                     android:textColor="@color/vox_red"
                     android:textStyle="bold"
                     app:cornerRadius="6dp"
@@ -111,7 +135,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="18dp"
-                android:hint="Preset"
+                android:hint="@string/preset_hint"
                 app:boxStrokeColor="@color/vox_amber"
                 app:hintTextColor="@color/vox_amber">
 
@@ -145,7 +169,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="monospace"
-                        android:text="SPEED"
+                        android:text="@string/speed_label"
                         android:textColor="@color/vox_muted"
                         android:textSize="12sp" />
 
@@ -192,7 +216,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="monospace"
-                        android:text="PITCH"
+                        android:text="@string/pitch_label"
                         android:textColor="@color/vox_muted"
                         android:textSize="12sp" />
 
@@ -239,7 +263,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="monospace"
-                        android:text="ROBOTNESS"
+                        android:text="@string/robotness_label"
                         android:textColor="@color/vox_muted"
                         android:textSize="12sp" />
 

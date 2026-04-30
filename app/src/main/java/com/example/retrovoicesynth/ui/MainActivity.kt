@@ -12,6 +12,7 @@ import com.example.retrovoicesynth.presets.VoicePreset
 import com.example.retrovoicesynth.synth.AudioPlayer
 import com.example.retrovoicesynth.synth.RetroVoiceSynth
 import com.example.retrovoicesynth.synth.SynthControls
+import com.example.retrovoicesynth.ui.theme.ThemePreferences
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.slider.Slider
 import com.google.android.material.textfield.TextInputEditText
@@ -25,6 +26,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var inputText: TextInputEditText
     private lateinit var presetDropdown: AutoCompleteTextView
+    private lateinit var themeButton: MaterialButton
     private lateinit var speakButton: MaterialButton
     private lateinit var stopButton: MaterialButton
     private lateinit var statusText: TextView
@@ -34,11 +36,14 @@ class MainActivity : AppCompatActivity() {
     private lateinit var speedValue: TextView
     private lateinit var pitchValue: TextView
     private lateinit var robotnessValue: TextView
+    private lateinit var themePreferences: ThemePreferences
 
     @Volatile
     private var synthesisRunId = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        themePreferences = ThemePreferences(this)
+        themePreferences.applySavedMode()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -57,6 +62,7 @@ class MainActivity : AppCompatActivity() {
     private fun bindViews() {
         inputText = findViewById(R.id.inputText)
         presetDropdown = findViewById(R.id.presetDropdown)
+        themeButton = findViewById(R.id.themeButton)
         speakButton = findViewById(R.id.speakButton)
         stopButton = findViewById(R.id.stopButton)
         statusText = findViewById(R.id.statusText)
@@ -83,6 +89,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun configureActions() {
+        updateThemeButton()
+        themeButton.setOnClickListener {
+            themePreferences.toggleMode()
+            updateThemeButton()
+        }
         speakButton.setOnClickListener { speak() }
         stopButton.setOnClickListener {
             synthesisRunId += 1
@@ -104,13 +115,13 @@ class MainActivity : AppCompatActivity() {
         val runId = ++synthesisRunId
 
         audioPlayer.stop()
-        setBusy("RENDER")
+        setBusy(getString(R.string.status_render))
 
         thread(name = "vox-80-synth") {
             val samples = synth.synthesize(text, preset, controls)
             mainHandler.post {
                 if (runId != synthesisRunId) return@post
-                setBusy("SPEAK")
+                setBusy(getString(R.string.status_speak))
                 audioPlayer.play(samples, preset.sampleRate) {
                     mainHandler.post {
                         if (runId == synthesisRunId) {
@@ -135,6 +146,16 @@ class MainActivity : AppCompatActivity() {
         slider.addOnChangeListener { _, _, _ -> updateLabel() }
     }
 
+    private fun updateThemeButton() {
+        val isDarkMode = themePreferences.isDarkMode()
+        themeButton.setIconResource(
+            if (isDarkMode) R.drawable.ic_theme_light else R.drawable.ic_theme_dark
+        )
+        themeButton.contentDescription = getString(
+            if (isDarkMode) R.string.theme_toggle_light else R.string.theme_toggle_dark
+        )
+    }
+
     private fun setBusy(text: String) {
         statusText.text = text
         speakButton.isEnabled = false
@@ -142,7 +163,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setIdle() {
-        statusText.text = "READY"
+        statusText.text = getString(R.string.status_ready)
         speakButton.isEnabled = true
         stopButton.isEnabled = true
     }

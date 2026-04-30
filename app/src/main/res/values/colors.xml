@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="vox_background">#FF101318</color>
-    <color name="vox_panel">#FF171D24</color>
-    <color name="vox_panel_high">#FF212A33</color>
-    <color name="vox_text">#FFE7F4EF</color>
-    <color name="vox_muted">#FF98A7A1</color>
-    <color name="vox_green">#FF61D394</color>
-    <color name="vox_amber">#FFFFC857</color>
-    <color name="vox_red">#FFFF6B5A</color>
-    <color name="vox_line">#FF31404A</color>
+    <color name="vox_background">#FFF4F0E8</color>
+    <color name="vox_root_gradient_start">#FFFFFCF4</color>
+    <color name="vox_root_gradient_end">#FFECE6DA</color>
+    <color name="vox_panel">#FFFFFFFF</color>
+    <color name="vox_panel_high">#FFF3F7F0</color>
+    <color name="vox_text">#FF19201D</color>
+    <color name="vox_muted">#FF66726C</color>
+    <color name="vox_green">#FF218457</color>
+    <color name="vox_amber">#FFC98713</color>
+    <color name="vox_red">#FFD44A3A</color>
+    <color name="vox_line">#FFD3D9D2</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 </resources>

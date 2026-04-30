@@ -1,4 +1,16 @@
 <resources>
     <string name="app_name">Vox-80</string>
     <string name="default_phrase">Warning. Main computer online.</string>
+    <string name="input_text_hint">Текст для синтеза</string>
+    <string name="speak_button">Озвучить</string>
+    <string name="stop_button">Стоп</string>
+    <string name="preset_hint">Пресет</string>
+    <string name="speed_label">СКОРОСТЬ</string>
+    <string name="pitch_label">ВЫСОТА</string>
+    <string name="robotness_label">РОБОТИЗАЦИЯ</string>
+    <string name="status_ready">ГОТОВ</string>
+    <string name="status_render">СИНТЕЗ</string>
+    <string name="status_speak">РЕЧЬ</string>
+    <string name="theme_toggle_light">Включить светлую тему</string>
+    <string name="theme_toggle_dark">Включить тёмную тему</string>
 </resources>

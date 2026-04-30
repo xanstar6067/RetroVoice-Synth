@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="vox_background">#FF101318</color>
+    <color name="vox_root_gradient_start">#FF1A2027</color>
+    <color name="vox_root_gradient_end">#FF101318</color>
+    <color name="vox_panel">#FF171D24</color>
+    <color name="vox_panel_high">#FF212A33</color>
+    <color name="vox_text">#FFE7F4EF</color>
+    <color name="vox_muted">#FF98A7A1</color>
+    <color name="vox_green">#FF61D394</color>
+    <color name="vox_amber">#FFFFC857</color>
+    <color name="vox_red">#FFFF6B5A</color>
+    <color name="vox_line">#FF31404A</color>
+</resources>

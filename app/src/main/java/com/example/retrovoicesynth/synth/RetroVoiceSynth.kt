@@ -19,7 +19,13 @@ class RetroVoiceSynth(
         phonemes.forEach { phoneme ->
             buffer.appendAll(generator.generate(phoneme, preset.sampleRate, preset, controls))
             if (phoneme.kind != PhonemeKind.Pause) {
-                buffer.appendSilence((preset.sampleRate * 0.012f / controls.speed.coerceAtLeast(0.4f)).toInt())
+                val silenceSeconds = when (phoneme.kind) {
+                    PhonemeKind.Stop, PhonemeKind.Fricative -> 0.008f
+                    PhonemeKind.Liquid, PhonemeKind.Nasal -> 0.004f
+                    PhonemeKind.Vowel -> 0.006f
+                    PhonemeKind.Pause -> 0f
+                }
+                buffer.appendSilence((preset.sampleRate * silenceSeconds / controls.speed.coerceAtLeast(0.4f)).toInt())
             }
         }
 

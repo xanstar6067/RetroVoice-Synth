@@ -97,13 +97,28 @@ class FormantGenerator {
         val output = ShortArray(sampleCount)
         val pitch = preset.basePitchHz * controls.pitch * 2.4f
         val clickSamples = min(sampleCount, sampleRate / 90)
+        val voiced = phoneme.symbol in voicedStops
+        val tailSamples = if (voiced) min(sampleCount, sampleRate / 28) else clickSamples
 
         for (index in 0 until clickSamples) {
             val progress = index.toFloat() / clickSamples
             val decay = 1f - progress
             val tone = sin(2.0 * PI * pitch * index / sampleRate).toFloat()
-            val sample = (tone * 0.46f + centeredNoise() * 0.32f) * decay * phoneme.intensity
+            val burst = if (voiced) 0.44f else 0.32f
+            val sample = (tone * 0.46f + centeredNoise() * burst) * decay * phoneme.intensity
             output[index] = toPcm(applyRetro(sample, preset.bitDepth, robotness))
+        }
+        if (voiced) {
+            val buzzPitch = preset.basePitchHz * preset.pitchMultiplier * controls.pitch * 0.74f
+            for (index in clickSamples until tailSamples) {
+                val progress = (index - clickSamples).toFloat() / max(1, tailSamples - clickSamples)
+                val decay = 1f - progress
+                val time = index.toDouble() / sampleRate
+                val buzz = sin(2.0 * PI * buzzPitch * time).toFloat() * 0.34f
+                val edge = centeredNoise() * 0.08f
+                val sample = (buzz + edge) * decay * phoneme.intensity
+                output[index] = toPcm(applyRetro(sample, preset.bitDepth, robotness))
+            }
         }
         return output
     }
@@ -118,13 +133,24 @@ class FormantGenerator {
     ): ShortArray {
         val output = ShortArray(sampleCount)
         val pitch = preset.basePitchHz * preset.pitchMultiplier * controls.pitch * 0.82f
+        val isNg = phoneme.symbol == "ng"
 
         for (index in output.indices) {
             val time = index.toDouble() / sampleRate
-            val envelope = envelope(index, sampleCount, attack = 0.1f, release = 0.16f)
-            val hum = sin(2.0 * PI * pitch * time).toFloat() * 0.46f
+            val envelope = envelope(
+                index = index,
+                total = sampleCount,
+                attack = if (isNg) 0.055f else 0.1f,
+                release = if (isNg) 0.24f else 0.16f
+            )
+            val hum = sin(2.0 * PI * pitch * time).toFloat() * if (isNg) 0.54f else 0.46f
             val nasalPeak = sin(2.0 * PI * 280.0 * preset.formantShift * time).toFloat() * 0.24f
-            val sample = (hum + nasalPeak) * envelope * phoneme.intensity
+            val backPeak = if (isNg) {
+                sin(2.0 * PI * 980.0 * preset.formantShift * time).toFloat() * 0.18f
+            } else {
+                0f
+            }
+            val sample = (hum + nasalPeak + backPeak) * envelope * phoneme.intensity
             output[index] = toPcm(applyRetro(sample, preset.bitDepth, robotness))
         }
         return output
@@ -140,15 +166,49 @@ class FormantGenerator {
     ): ShortArray {
         val output = ShortArray(sampleCount)
         val pitch = preset.basePitchHz * preset.pitchMultiplier * controls.pitch
+        val isL = phoneme.symbol == "l"
+        val isR = phoneme.symbol == "r"
 
         for (index in output.indices) {
             val time = index.toDouble() / sampleRate
             val progress = index.toFloat() / max(1, sampleCount - 1)
-            val envelope = envelope(index, sampleCount, attack = 0.12f, release = 0.14f)
-            val sweep = 550f + 520f * progress
+            val envelope = envelope(
+                index = index,
+                total = sampleCount,
+                attack = when {
+                    isL -> 0.025f
+                    isR -> 0.04f
+                    else -> 0.12f
+                },
+                release = when {
+                    isL -> 0.08f
+                    isR -> 0.12f
+                    else -> 0.14f
+                }
+            )
+            val sweep = when {
+                isL -> 330f + 520f * progress
+                isR -> 900f - 320f * progress
+                else -> 550f + 520f * progress
+            }
             val buzz = if (((time * pitch) % 1.0) < 0.5) 1f else -1f
             val tone = buzz.toFloat() * sin(2.0 * PI * sweep * preset.formantShift * time).toFloat()
-            val sample = tone * envelope * phoneme.intensity * 0.45f
+            val lowerBody = when {
+                isL -> sin(2.0 * PI * 250.0 * preset.formantShift * time).toFloat() * 0.34f
+                isR -> sin(2.0 * PI * 1350.0 * preset.formantShift * time).toFloat() * 0.24f
+                else -> 0f
+            }
+            val onset = if ((isL || isR) && index < sampleRate / 180) {
+                centeredNoise() * (1f - index.toFloat() / max(1, sampleRate / 180)) * 0.09f
+            } else {
+                0f
+            }
+            val amplitude = when {
+                isL -> 0.7f
+                isR -> 0.66f
+                else -> 0.45f
+            }
+            val sample = ((tone + lowerBody) * envelope + onset) * phoneme.intensity * amplitude
             output[index] = toPcm(applyRetro(sample, preset.bitDepth, robotness))
         }
         return output
@@ -174,4 +234,8 @@ class FormantGenerator {
     }
 
     private fun centeredNoise(): Float = random.nextFloat() * 2f - 1f
+
+    private companion object {
+        val voicedStops = setOf("b", "d", "g")
+    }
 }

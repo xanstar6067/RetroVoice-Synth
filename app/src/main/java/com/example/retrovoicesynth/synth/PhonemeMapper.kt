@@ -16,6 +16,11 @@ class PhonemeMapper {
     }
 
     private fun appendWord(word: String, output: MutableList<Phoneme>) {
+        wordOverrides[word]?.let { phonemes ->
+            output += phonemes
+            return
+        }
+
         var index = 0
         while (index < word.length) {
             val pair = word.getOrNull(index)?.let { first ->
@@ -34,6 +39,10 @@ class PhonemeMapper {
                 "ch" -> {
                     output += stop("ch", 88, 1f)
                     output += fricative("sh", 52, 0.72f)
+                    index += 2
+                }
+                "ng" -> {
+                    output += Phoneme("ng", PhonemeKind.Nasal, 142, intensity = 1.04f)
                     index += 2
                 }
                 "oo" -> {
@@ -66,9 +75,13 @@ class PhonemeMapper {
             's', 'z' -> fricative(char.toString(), 78, 0.9f)
             'f', 'v' -> fricative(char.toString(), 72, 0.72f)
             'h' -> fricative("h", 58, 0.52f)
-            't', 'k', 'p', 'b', 'd', 'g', 'q', 'x', 'c' -> stop(char.toString(), 72, 0.95f)
+            'd' -> stop("d", 96, 1.18f)
+            'b', 'g' -> stop(char.toString(), 88, 1.05f)
+            't', 'k', 'p', 'q', 'x', 'c' -> stop(char.toString(), 72, 0.95f)
             'm', 'n' -> Phoneme(char.toString(), PhonemeKind.Nasal, 112, intensity = 0.86f)
-            'l', 'r', 'w', 'j' -> Phoneme(char.toString(), PhonemeKind.Liquid, 96, intensity = 0.72f)
+            'l' -> Phoneme("l", PhonemeKind.Liquid, 146, intensity = 1.08f)
+            'r' -> Phoneme("r", PhonemeKind.Liquid, 132, intensity = 1.02f)
+            'w', 'j' -> Phoneme(char.toString(), PhonemeKind.Liquid, 96, intensity = 0.72f)
             else -> Phoneme("gap", PhonemeKind.Pause, 42, intensity = 0f)
         }
     }
@@ -83,5 +96,25 @@ class PhonemeMapper {
 
     private fun stop(symbol: String, durationMs: Int, intensity: Float): Phoneme {
         return Phoneme(symbol, PhonemeKind.Stop, durationMs, intensity = intensity)
+    }
+
+    private companion object {
+        val wordOverrides = mapOf(
+            "warning" to listOf(
+                Phoneme("w", PhonemeKind.Liquid, 96, intensity = 0.82f),
+                Phoneme("aw", PhonemeKind.Vowel, 150, VowelFormants(560f, 920f, 2380f)),
+                Phoneme("r", PhonemeKind.Liquid, 144, intensity = 1.08f),
+                Phoneme("n", PhonemeKind.Nasal, 108, intensity = 0.9f),
+                Phoneme("i", PhonemeKind.Vowel, 108, VowelFormants(360f, 2100f, 2900f)),
+                Phoneme("ng", PhonemeKind.Nasal, 152, intensity = 1.08f)
+            ),
+            "online" to listOf(
+                Phoneme("o", PhonemeKind.Vowel, 150, VowelFormants(570f, 840f, 2410f)),
+                Phoneme("n", PhonemeKind.Nasal, 112, intensity = 0.86f),
+                Phoneme("l", PhonemeKind.Liquid, 156, intensity = 1.14f),
+                Phoneme("ai", PhonemeKind.Vowel, 145, VowelFormants(700f, 1750f, 2550f)),
+                Phoneme("n", PhonemeKind.Nasal, 118, intensity = 0.92f)
+            )
+        )
     }
 }

@@ -12,4 +12,9 @@
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowLightNavigationBar">true</item>
     </style>
+
+    <style name="ThemeOverlay_RetroVoice_DropdownNoRipple">
+        <item name="colorControlHighlight">@android:color/transparent</item>
+        <item name="android:colorControlHighlight">@android:color/transparent</item>
+    </style>
 </resources>

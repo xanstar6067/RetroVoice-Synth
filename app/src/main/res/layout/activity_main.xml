@@ -131,6 +131,7 @@
             </LinearLayout>
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/presetInputLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -143,8 +144,10 @@
                     android:id="@+id/presetDropdown"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:dropDownSelector="@drawable/preset_dropdown_selector"
                     android:fontFamily="monospace"
                     android:inputType="none"
+                    android:theme="@style/ThemeOverlay_RetroVoice_DropdownNoRipple"
                     android:textColor="@color/vox_text"
                     android:textSize="16sp" />
             </com.google.android.material.textfield.TextInputLayout>

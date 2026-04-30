@@ -81,6 +81,10 @@ class MainActivity : AppCompatActivity() {
             PresetAdapter(names)
         )
         presetDropdown.setText(VoicePreset.all.first().displayName, false)
+        presetDropdown.post {
+            presetDropdown.dismissDropDown()
+            presetDropdown.clearFocus()
+        }
     }
 
     private inner class PresetAdapter(
